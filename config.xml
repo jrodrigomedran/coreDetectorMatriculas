@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+    Archivo de configuración del detector de matrículas
+    Autor: Jesús Rodrigo Medrán
+    ** Aquí se almacenarán todos aquellos datos que **
+              puedan variar en el código
+-->
+<detector>
+    <pathImg>C:/Users/Usuario/Documents/Matriculas/</pathImg>
+    <nombreArchivo>4828FFM.jpg</nombreArchivo>
+    <directorioTess>F:/Tess4J-3.4.3-src/Tess4J</directorioTess>
+
+    <!-- Si tipoFiltro es true, el filtro a emplear será Canny, 
+         en caso contrario, se aplicará Sobel -->
+    <filtros tipoFiltro="false">
+        <!-- Umbrales para filtro Canny -->
+        <umbralCanny>238</umbralCanny>
+        <factor2UmbralCanny>2</factor2UmbralCanny>
+    </filtros>
+
+    <aThresholdBlockSize>50</aThresholdBlockSize>
+    <aThresholdC>4</aThresholdC>
+
+    <umbralKernel1>9</umbralKernel1>
+    <umbralKernel2>4</umbralKernel2>
+
+    <!-- Valores para realizar la conexión con la base de datos SQL que contiene los datos con las infracciones -->
+    <postgreSQL dir="jdbc:postgresql://127.0.0.1:5433/InforMatriculas" enabled="false" user="postgres" password="root"></postgreSQL>
+
+    <!-- Valor para decidir si se desea crear el archivo JSON o no -->
+    <fileJson createFile="false"></fileJson>
+
+    <!-- Valor para decidir si se enviar información a MongoDB -->
+    <mongoDB dir="localhost" port="27017" enabled="false" dbName="Infracciones" collection="InfraccionesDet"></mongoDB>
+
+</detector>
