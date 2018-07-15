@@ -3,6 +3,7 @@ package readerXML;
 public class Values {
 	
 	public String pathImg;
+	public String pathImgMatriculas;
 	public String nombreArchivo;
 	public String pathTess;
 	public String getPathTess() {
@@ -21,12 +22,13 @@ public class Values {
 	public int aThresholdBlockSize;
 	public int aThresholdC;
 
-	public Values(String pathImg, String nombreArchivo, String pathTess,
+	public Values(String pathImg, String pathImgMatriculas, String nombreArchivo, String pathTess,
 			int umbralCanny, int factorCanny, boolean typeFiltre,
 			int umbralKernel1, int umbralKernel2, int aThresholdBlockSize,
 			int aThresholdC) {
 		super();
 		this.pathImg = pathImg;
+		this.pathImgMatriculas = pathImgMatriculas;
 		this.pathTess = pathTess;
 		this.nombreArchivo = nombreArchivo;
 		this.umbralCanny = umbralCanny;
@@ -36,6 +38,14 @@ public class Values {
 		this.umbralKernel2 = umbralKernel2;
 		this.aThresholdBlockSize = aThresholdBlockSize;
 		this.aThresholdC = aThresholdC;
+	}
+
+	public String getPathImgMatriculas() {
+		return pathImgMatriculas;
+	}
+
+	public void setPathImgMatriculas(String pathImgMatriculas) {
+		this.pathImgMatriculas = pathImgMatriculas;
 	}
 
 	public int getaThresholdBlockSize() {

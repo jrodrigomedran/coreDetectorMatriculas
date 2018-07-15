@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opencv.core.Core;
+//import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -88,7 +88,7 @@ class Detector {
         
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 	    Mat hierarchy = new Mat();
-	    Imgproc.findContours(imgThereshold, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+	    Imgproc.findContours(imgThereshold, contours, hierarchy, Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE); //RETR_EXTERNAL CHAIN_APPROX_NONE
 	    List<Rect> boundRect=new ArrayList<>();
 	    
 	    for(int i=0; i< contours.size();i++)
@@ -110,24 +110,40 @@ class Detector {
 	    }
 	    
 	    Rect fBoundRect = filtrarRect(boundRect, imgMatricula2);
-	    Mat imgRecorte = new Mat();
 	    
 	    // Si es buena, no necesita tratamiento extra
-	    if(checkProporcion(fBoundRect))	
+	    //if(checkProporcion(fBoundRect))	
+	    if(!fBoundRect.empty())
 	    {
 	        Imgproc.rectangle(imgMatricula2,fBoundRect.br(), fBoundRect.tl(),new Scalar(0,255,0),3,8,0);  
 		    Imgcodecs.imwrite(pathImg+"RectanguloMatricula.png",imgMatricula2);
 		    
-		    convertRectToImgForText(imgMatricula2, fBoundRect, pathImg, valuesXML);
+		    matricula = convertRectToImgForText(imgMatricula2, fBoundRect, pathImg, valuesXML);
+		    if((matricula != "") || (matricula != null))
+		    {
+		    	File file_temp = new File(pathImg+"RectanguloMatricula.png");
+			    File file_final = new File(valuesXML.pathImgMatriculas+"MATRICULA_"+matricula+".png");
+			    boolean success = file_temp.renameTo(file_final);
+			    if(!success)
+			    {
+			    	System.out.println("	[X] Error al copiar imagen");
+			    }
+			    else
+			    {
+			    	System.out.println("	[V] Imagen copiada correctamente");
+			    	file_temp.delete();
+			    }
+		    }
 	    }
-	    else
-	    {
-	    	
-	    }
-        
+	    
 	    return matricula;
     }
 	
+	/*
+	 * Esta funcion se encarga de comprobar si la matricula detectada se ajusta a las proporciones validas
+	 * [in] fBoundRect Rectangulo con la matricula detectada
+	 * [out] True/False si se cumple o no la proporción
+	 */
 	public boolean checkProporcion(Rect fBoundRect)
 	{
 		double altura = fBoundRect.height;
@@ -135,17 +151,15 @@ class Detector {
 		double prop = 0;
 		
 		prop = anchura/altura;
-		System.out.println(prop);
-		System.out.println("margen inferior: " + (PROP_MATRICULAS-ERROR_A_PROP));
-		System.out.println("margen superior: " + (PROP_MATRICULAS+ERROR_A_PROP));
+		
 		if((prop < (PROP_MATRICULAS-ERROR_A_PROP)) || (prop > (PROP_MATRICULAS+ERROR_A_PROP)))
 		{
-			System.out.println("Matricula no valida");
+			System.out.println("	[X] Matricula con proporciones no válidas");
 			return false;
 		}
 		else
 		{
-			System.out.println("Matricula valida");
+			System.out.println("	[I] Matricula con proporciones válidas");
 			return true;
 		}
 	}
@@ -191,7 +205,10 @@ class Detector {
 		}
 		else
 		{
-			rectMayor = filterBoundRect.get(0);
+			if(!filterBoundRect.isEmpty())
+			{
+				rectMayor = filterBoundRect.get(0);
+			}
 		}
 		
 		return rectMayor;
@@ -295,17 +312,17 @@ class Detector {
 	{
 		Mat cropImg = new Mat(img, rect);
 		Imgproc.cvtColor(cropImg, cropImg, Imgproc.COLOR_RGB2GRAY);  		// A escala de grises
-		Imgproc.GaussianBlur(cropImg, cropImg, new Size(3,3),0);	    	// Reducción de ruidos
+		//Imgproc.GaussianBlur(cropImg, cropImg, new Size(3,3),0);	    	// Reducción de ruidos
 
-		Imgproc.threshold(cropImg, cropImg, 0, 255, Imgproc.THRESH_OTSU+Imgproc.THRESH_BINARY);
+		//Imgproc.threshold(cropImg, cropImg, 0, 255, Imgproc.THRESH_OTSU+Imgproc.THRESH_BINARY);
 		
-		String nameImg = pathImg+"MATRICULA_Cut.png";
+		String nameImg = pathImg+"_temp_MATRICULA_Cut.png";
 		File fileImg = new File(nameImg);
 		Imgcodecs.imwrite(nameImg,cropImg);
 		
 		if(fileImg.exists())
 		{
-			String matricula = extractText(pathImg, "MATRICULA_Cut.png", valuesXML);	// Extraemos el texto de la matrícula
+			String matricula = extractText(pathImg, "_temp_MATRICULA_Cut.png", valuesXML);	// Extraemos el texto de la matrícula
 			matricula = checkMatricula(matricula);
 		    if(matricula.length() == 0)
 		    {
@@ -374,6 +391,11 @@ class Detector {
 			if(bInitLetter && (cntL==3))
 			{
 				matricula = matricula.substring(1, matricula.length());
+			}
+			
+			if(Character.isDigit(matricula.charAt(matricula.length()-1)))
+			{
+				matricula = matricula.substring(0, matricula.length()-1);
 			}
 			
 		}

@@ -20,67 +20,8 @@ import bbdd.*;
 public class main {
  
 	public static void main(String arg[]) throws InterruptedException {
-		// Leer libreria nativa
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Reader readerXML = new Reader();
-		String pathDir = System.getProperty("user.dir"); // Se extrae el directorio de ejecución
-		String matriculaLeida="";
-		String xmlPath= pathDir + "\\config.xml";
-
-		try {
-			Values vXML = readerXML.leerXML(xmlPath);
-			if(vXML!=null)
-			{
-				matriculaLeida = new Detector().detectorMatriculas(vXML);
-			}
-			else
-			{
-				System.out.println("	[x] ERROR: No se ha podido realizar el procesamiento");
-			}
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
 		
-		System.out.println("	[V] Procesamiento de imagen finalizado");
-		
-		JSONObject objJson = new JSONObject();
-		
-		// Se establece conexion con SQL y se genera el JSON
-		try {
-			if(readerXML.leerXMLbddSQL(xmlPath, 2).equals("true"))
-			{
-				ConnectSQL driver = new ConnectSQL();
-				Connection connection = null;
-				connection = driver.connectInforGen(xmlPath);
-				
-				objJson = driver.executeSQL(connection, matriculaLeida, xmlPath);
-			}
-			else
-			{
-				System.out.println("	[I] PostgreSQL deshabilitado");
-			}
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		
-		// Se envía el JSON a MongoDB
-		try {
-			if(readerXML.leerXMLbddMongoDB(xmlPath, 2).equals("true"))
-			{
-				ConnectMongoDB driverMongo = new ConnectMongoDB(readerXML, xmlPath);
-				MongoDatabase dbMongo = driverMongo.connectMongo();
-				if(!objJson.isEmpty())
-				{
-					driverMongo.enviarMongo(objJson, dbMongo);
-				}
-			}
-			else
-			{
-				System.out.println("	[I] MongoDB deshabilitado");
-			}
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
+		detectorMatriculasMain();
 		
 		// Se crea el JFrame
 		/*JFrame frame = new JFrame("Detección de matriculas");
@@ -116,5 +57,70 @@ public class main {
 			}
 		}
 		webCam.release(); // Se libera el recurso de la webcam*/
+	}
+	
+	public static void detectorMatriculasMain()
+	{
+		// Leer libreria nativa
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		Reader readerXML = new Reader();
+		String pathDir = System.getProperty("user.dir"); // Se extrae el directorio de ejecución
+		String matriculaLeida="";
+		String xmlPath= pathDir + "\\config.xml";
+
+		try {
+			Values vXML = readerXML.leerXML(xmlPath);
+			if(vXML!=null)
+			{
+				matriculaLeida = new Detector().detectorMatriculas(vXML);
+			}
+			else
+			{
+				System.out.println("	[x] ERROR: No se ha podido realizar el procesamiento");
+			}
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+				
+		System.out.println("	[V] Procesamiento de imagen finalizado");
+				
+		JSONObject objJson = new JSONObject();
+			
+		// Se establece conexion con SQL y se genera el JSON
+		try {
+			if(readerXML.leerXMLbddSQL(xmlPath, 2).equals("true"))
+			{
+				ConnectSQL driver = new ConnectSQL();
+				Connection connection = null;
+				connection = driver.connectInforGen(xmlPath);
+					
+				objJson = driver.executeSQL(connection, matriculaLeida, xmlPath);
+			}
+			else
+			{
+				System.out.println("	[I] PostgreSQL deshabilitado");
+			}
+		} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+		}
+				
+		// Se envía el JSON a MongoDB
+		try {
+			if(readerXML.leerXMLbddMongoDB(xmlPath, 2).equals("true"))
+			{
+				ConnectMongoDB driverMongo = new ConnectMongoDB(readerXML, xmlPath);
+				MongoDatabase dbMongo = driverMongo.connectMongo();
+				if(!objJson.isEmpty())
+				{
+					driverMongo.enviarMongo(objJson, dbMongo);
+				}
+			}
+			else
+			{
+				System.out.println("	[I] MongoDB deshabilitado");
+			}
+		} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+		}
 	}
 }
