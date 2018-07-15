@@ -1,6 +1,17 @@
 package core;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Kind;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.sql.Connection;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -19,9 +30,41 @@ import bbdd.*;
 
 public class main {
  
+	static WatchService wService;
+	static WatchKey key;
+    
 	public static void main(String arg[]) throws InterruptedException {
 		
-		detectorMatriculasMain();
+		// Leer libreria nativa
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		Reader readerXML = new Reader();
+		String pathDir = System.getProperty("user.dir"); // Se extrae el directorio de ejecución
+		String xmlPath= pathDir + "\\config.xml";
+
+		try {
+			Values vXML = readerXML.leerXML(xmlPath);
+			Path directoryPath = FileSystems.getDefault().getPath(vXML.pathImg);
+			if (!Files.exists(directoryPath)) {
+	            System.out.println(String.format("	[X] El directorio %s no exite", directoryPath.toString()));
+	        }
+	        System.out.println(String.format("	[I] Monitorizando cambios en " +  directoryPath.toString()));
+	        try {
+				wService = FileSystems.getDefault().newWatchService();
+				directoryPath.register(wService, StandardWatchEventKinds.ENTRY_CREATE);
+				while(true)
+				{
+					controlChangesDirectory(vXML, readerXML, xmlPath);
+				}
+	        } catch (Exception e) 
+	        {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+			//detectorMatriculasMain(vXML, readerXML, xmlPath);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
 		
 		// Se crea el JFrame
 		/*JFrame frame = new JFrame("Detección de matriculas");
@@ -59,27 +102,16 @@ public class main {
 		webCam.release(); // Se libera el recurso de la webcam*/
 	}
 	
-	public static void detectorMatriculasMain()
+	public static void detectorMatriculasMain(Values vXML, Reader readerXML, String xmlPath)
 	{
-		// Leer libreria nativa
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Reader readerXML = new Reader();
-		String pathDir = System.getProperty("user.dir"); // Se extrae el directorio de ejecución
 		String matriculaLeida="";
-		String xmlPath= pathDir + "\\config.xml";
-
-		try {
-			Values vXML = readerXML.leerXML(xmlPath);
-			if(vXML!=null)
-			{
-				matriculaLeida = new Detector().detectorMatriculas(vXML);
-			}
-			else
-			{
-				System.out.println("	[x] ERROR: No se ha podido realizar el procesamiento");
-			}
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+		if(vXML!=null)
+		{
+			matriculaLeida = new Detector().detectorMatriculas(vXML);
+		}
+		else
+		{
+			System.out.println("	[x] ERROR: No se ha podido realizar el procesamiento");
 		}
 				
 		System.out.println("	[V] Procesamiento de imagen finalizado");
@@ -123,4 +155,30 @@ public class main {
 				e.printStackTrace();
 		}
 	}
+	
+	public static void controlChangesDirectory(Values vXML, Reader readerXML, String xmlPath) throws Exception
+	{
+		/* Wait until we get some events */
+        key = wService.take();
+        if (key.isValid()) 
+        {
+	        List<WatchEvent<?>> events = key.pollEvents();
+	        for(WatchEvent<?> event: events) 
+	        {
+	        	/* In the case of ENTRY_CREATE events the context is a relative */
+	            Path path = (Path)event.context();
+	            Kind<?> kindOfEvent = event.kind();
+	            System.out.println(String.format("	[I] Evento '%s' detectado en '%s'", kindOfEvent.name(),path));
+	            if(!path.toString().equals("RectanguloMatricula.png") && !path.toString().equals("_temp_MATRICULA_Cut.png"))
+	            {
+	            	vXML.setNombreArchivo(path.toString());
+	            	TimeUnit.SECONDS.sleep(1);
+	               	detectorMatriculasMain(vXML, readerXML, xmlPath);
+	            }
+	        }
+        }
+        /* once an key has been processed,  */
+        boolean valid = key.reset();
+        System.out.println(String.format("	[I] Tratamiento finalizado: %s", valid));
+    }
 }

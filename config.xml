@@ -8,7 +8,7 @@
 <detector>
     <pathImg>C:/Users/Usuario/Documents/Matriculas/</pathImg>
     <pathImgMatricula>F:/MATRICULAS_DETECTADAS/</pathImgMatricula>
-    <nombreArchivo>5649JSN.jpg</nombreArchivo>
+    <nombreArchivo>""</nombreArchivo>
     <directorioTess>F:/Tess4J-3.4.3-src/Tess4J</directorioTess>
 
     <!-- Si tipoFiltro es true, el filtro a emplear será Canny, 

@@ -65,7 +65,7 @@ class Detector {
         
         Imgproc.cvtColor(imgMatricula, imgMatricula, Imgproc.COLOR_RGB2GRAY);  		// A escala de grises
         Imgproc.GaussianBlur(imgMatricula, imgMatricula, new Size(21,21),0);	    // Reducción de ruidos
-        Imgcodecs.imwrite(pathImg+"rgb2gray.png",imgMatricula);
+        //Imgcodecs.imwrite(pathImg+"rgb2gray.png",imgMatricula);
 	 
         // HoughLinesP
         Imgproc.cvtColor(imgMatricula3, imgMatricula3, Imgproc.COLOR_RGB2GRAY);  	// A escala de grises
@@ -79,12 +79,12 @@ class Detector {
         	double[] val = lines.get(0, i); 
         	Imgproc.line(imgMatricula3, new Point(val[0], val[1]), new Point(val[2], val[3]), new Scalar(0, 0, 255), 2); 
         } 
-        Imgcodecs.imwrite(pathImg+"lines.png",imgMatricula3);
+        //Imgcodecs.imwrite(pathImg+"lines.png",imgMatricula3);
         //**********
 	    
         Mat imgThereshold = new Mat();
         Imgproc.threshold(imgMatricula3, imgThereshold, 0, 255, Imgproc.THRESH_OTSU+Imgproc.THRESH_BINARY);
-        Imgcodecs.imwrite(pathImg+"umbral.png", imgThereshold);
+        //Imgcodecs.imwrite(pathImg+"umbral.png", imgThereshold);
         
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 	    Mat hierarchy = new Mat();
@@ -331,6 +331,7 @@ class Detector {
 		    else
 		    {
 		    	System.out.println("	[V] Matricula detectada: " + matricula);
+		    	fileImg.delete();
 		    }
 		    return matricula;
 		}
