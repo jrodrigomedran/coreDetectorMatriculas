@@ -26,6 +26,7 @@ public class Reader {
 		{
 			String pathImg = "";
 			String pathImgMatriculas = "";
+			String pathWeb = "";
 			String nombreArch = "";
 			String pathTess = "";
 			int umbralCanny = 0;
@@ -36,7 +37,7 @@ public class Reader {
 			int aThresholdBlockSize = 0;
 			int aThresholdC = 0;
 			
-			Values valuesXML = new Values(pathImg, pathImgMatriculas, nombreArch, pathTess, umbralCanny, factorUmbralCanny, 
+			Values valuesXML = new Values(pathImg, pathImgMatriculas, pathWeb, nombreArch, pathTess, umbralCanny, factorUmbralCanny, 
 					typeFiltre, umbralKernel1, umbralKernel2, aThresholdBlockSize, aThresholdC);
 			
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -47,6 +48,8 @@ public class Reader {
 				
 				pathImg = document.getElementsByTagName("pathImg").item(0).getTextContent();
 				pathImgMatriculas = document.getElementsByTagName("pathImgMatricula").item(0).getTextContent();
+				pathWeb = document.getElementsByTagName("pathFrontEndImg").item(0).getTextContent();
+				
 				nombreArch = document.getElementsByTagName("nombreArchivo").item(0).getTextContent();
 				pathTess = document.getElementsByTagName("directorioTess").item(0).getTextContent();
 				String umbralCanny_aux = document.getElementsByTagName("umbralCanny").item(0).getTextContent();
@@ -62,6 +65,8 @@ public class Reader {
 				
 				valuesXML.setPathImg(pathImg);
 				valuesXML.setPathImgMatriculas(pathImgMatriculas);
+				valuesXML.setPathWeb(pathWeb);
+				
 				valuesXML.setNombreArchivo(nombreArch);
 				valuesXML.setPathTess(pathTess);
 				

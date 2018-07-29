@@ -102,6 +102,13 @@ public class main {
 		webCam.release(); // Se libera el recurso de la webcam*/
 	}
 	
+	/*
+	 * Esta función se encarga de procesar la imagen y extraer la matricula
+	 * para extraer la matricula
+	 * [in] vXML objeto con todos los datso leídos del XML de configuración
+	 * [in] readerXML objeto que lee el archivo de configuración
+	 * [in] xmlPath ruta del archivo de configuración
+	 */
 	public static void detectorMatriculasMain(Values vXML, Reader readerXML, String xmlPath)
 	{
 		String matriculaLeida="";
@@ -126,7 +133,7 @@ public class main {
 				Connection connection = null;
 				connection = driver.connectInforGen(xmlPath);
 					
-				objJson = driver.executeSQL(connection, matriculaLeida, xmlPath);
+				objJson = driver.executeSQL(connection, matriculaLeida, xmlPath, vXML);
 			}
 			else
 			{
@@ -156,6 +163,13 @@ public class main {
 		}
 	}
 	
+	/*
+	 * Esta función se encarga de detectar la creación de alguna imagen y de procesarla
+	 * para extraer la matricula
+	 * [in] vXML objeto con todos los datso leídos del XML de configuración
+	 * [in] readerXML objeto que lee el archivo de configuración
+	 * [in] xmlPath ruta del archivo de configuración
+	 */
 	public static void controlChangesDirectory(Values vXML, Reader readerXML, String xmlPath) throws Exception
 	{
 		/* Wait until we get some events */

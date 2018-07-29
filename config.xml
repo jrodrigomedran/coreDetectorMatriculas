@@ -7,7 +7,8 @@
 -->
 <detector>
     <pathImg>C:/Users/Usuario/Documents/Matriculas/</pathImg>
-    <pathImgMatricula>F:/MATRICULAS_DETECTADAS/</pathImgMatricula>
+    <pathImgMatricula>F:/WebDetectorMatriculas/webDetectorMatriculas/webDetectorMatriculas/src/assets/img/MATRICULAS_DETECTADAS/</pathImgMatricula>
+    <pathFrontEndImg>../../assets/img/MATRICULAS_DETECTADAS/</pathFrontEndImg>
     <nombreArchivo>""</nombreArchivo>
     <directorioTess>F:/Tess4J-3.4.3-src/Tess4J</directorioTess>
 
@@ -26,12 +27,12 @@
     <umbralKernel2>4</umbralKernel2>
 
     <!-- Valores para realizar la conexión con la base de datos SQL que contiene los datos con las infracciones -->
-    <postgreSQL dir="jdbc:postgresql://127.0.0.1:5433/InforMatriculas" enabled="false" user="postgres" password="root"></postgreSQL>
+    <postgreSQL dir="jdbc:postgresql://127.0.0.1:5433/InforMatriculas" enabled="true" user="postgres" password="root"></postgreSQL>
 
     <!-- Valor para decidir si se desea crear el archivo JSON o no -->
-    <fileJson createFile="false"></fileJson>
+    <fileJson createFile="true"></fileJson>
 
     <!-- Valor para decidir si se enviar información a MongoDB -->
-    <mongoDB dir="localhost" port="27017" enabled="false" dbName="Infracciones" collection="InfraccionesDet"></mongoDB>
+    <mongoDB dir="localhost" port="27017" enabled="true" dbName="Infracciones" collection="InfraccionesDet"></mongoDB>
 
 </detector>

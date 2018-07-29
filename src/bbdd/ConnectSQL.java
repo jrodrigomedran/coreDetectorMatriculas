@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.json.simple.JSONObject;
 
 import readerXML.Reader;
+import readerXML.Values;
 
 public class ConnectSQL {
 
@@ -68,7 +69,7 @@ public class ConnectSQL {
 	 * [in] xmlPath es la ruta donde se encuentra el archivo de configuración
 	 * [out] Devuelve la conexión creada
 	 */
-	public JSONObject executeSQL(Connection connection, String matricula, String xmlPath)
+	public JSONObject executeSQL(Connection connection, String matricula, String xmlPath, Values vXML)
 	{
 		Statement sStatement;
 		ResultSet sResultSet;
@@ -119,7 +120,7 @@ public class ConnectSQL {
 			
 			JSONObject objJson = new JSONObject();
 			try {
-				objJson = createJson(matricula, dniProp, nombreCompleto, marca, modelo, razon, fecha, localizacion, direccionCompleta, xmlPath);
+				objJson = createJson(matricula, dniProp, nombreCompleto, marca, modelo, razon, fecha, localizacion, direccionCompleta, xmlPath, vXML);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -144,14 +145,17 @@ public class ConnectSQL {
 			String fecha,
 			String localizacion,
 			String direccionCompleta,
-			String xmlPath) throws IOException
+			String xmlPath,
+			Values vXML) throws IOException
 	{
 		Date fechaActual = new Date();
 		Reader readerXML = new Reader();
 		String fechaAct=new SimpleDateFormat("dd-MM-yyyy").format(fechaActual);
+		String urlFoto = vXML.getPathWeb()+"MATRICULA_"+matricula+".png";
 		
 		JSONObject objJson = new JSONObject();
 		objJson.put("Matricula", matricula);
+		objJson.put("urlFoto", urlFoto);
 		
 		JSONObject itemProp = new JSONObject();
 		itemProp.put("DNI", dniProp);
