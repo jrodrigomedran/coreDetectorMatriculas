@@ -31,6 +31,7 @@ import bbdd.*;
 public class main {
  
 	static WatchService wService;
+	
 	static WatchKey key;
     
 	public static void main(String arg[]) throws InterruptedException {
@@ -112,6 +113,8 @@ public class main {
 	public static void detectorMatriculasMain(Values vXML, Reader readerXML, String xmlPath)
 	{
 		String matriculaLeida="";
+		Detector detect = new Detector();
+		
 		if(vXML!=null)
 		{
 			matriculaLeida = new Detector().detectorMatriculas(vXML);
@@ -134,6 +137,10 @@ public class main {
 				connection = driver.connectInforGen(xmlPath);
 					
 				objJson = driver.executeSQL(connection, matriculaLeida, xmlPath, vXML);
+				if(!objJson.isEmpty())
+				{
+					detect.moveFileImg(matriculaLeida, vXML);
+				}
 			}
 			else
 			{

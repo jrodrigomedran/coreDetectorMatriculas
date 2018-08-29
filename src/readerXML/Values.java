@@ -7,14 +7,6 @@ public class Values {
 	public String pathWeb;
 	public String nombreArchivo;
 	public String pathTess;
-	public String getPathTess() {
-		return pathTess;
-	}
-
-	public void setPathTess(String pathTess) {
-		this.pathTess = pathTess;
-	}
-
 	public int umbralCanny;
 	public int factorCanny;
 	public int umbralKernel1;
@@ -42,6 +34,14 @@ public class Values {
 		this.aThresholdC = aThresholdC;
 	}
 
+	public String getPathTess() {
+		return pathTess;
+	}
+
+	public void setPathTess(String pathTess) {
+		this.pathTess = pathTess;
+	}
+	
 	public String getPathWeb() {
 		return pathWeb;
 	}

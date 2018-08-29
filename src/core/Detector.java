@@ -70,7 +70,9 @@ class Detector {
         // HoughLinesP
         Imgproc.cvtColor(imgMatricula3, imgMatricula3, Imgproc.COLOR_RGB2GRAY);  	// A escala de grises
         Imgproc.blur(imgMatricula3, imgMatricula3, new Size(3, 3));	    			// Reducción de ruidos
+        //Imgcodecs.imwrite(pathImg+"rgb2gray.png",imgMatricula3);
         Imgproc.Canny(imgMatricula3, imgMatricula3, 50, 50*3);
+        //Imgcodecs.imwrite(pathImg+"canny.png",imgMatricula3);
         
         Mat lines = new Mat(); 
         Imgproc.HoughLinesP(imgMatricula3, lines, 1, Math.PI / 180, 50, 50, 10); 
@@ -119,25 +121,36 @@ class Detector {
 		    Imgcodecs.imwrite(pathImg+"RectanguloMatricula.png",imgMatricula2);
 		    
 		    matricula = convertRectToImgForText(imgMatricula2, fBoundRect, pathImg, valuesXML);
-		    if((matricula != "") || (matricula != null))
-		    {
-		    	File file_temp = new File(pathImg+"RectanguloMatricula.png");
-			    File file_final = new File(valuesXML.pathImgMatriculas+"MATRICULA_"+matricula+".png");
-			    boolean success = file_temp.renameTo(file_final);
-			    if(!success)
-			    {
-			    	System.out.println("	[X] Error al copiar imagen");
-			    }
-			    else
-			    {
-			    	System.out.println("	[V] Imagen copiada correctamente");
-			    	file_temp.delete();
-			    }
-		    }
 	    }
 	    
 	    return matricula;
     }
+	
+	/*
+	 * Esta funcion se encarga de transladar la imagen tratada al repositorio en caso de estar en la base de datos
+	 * [in] matricula es lamatricula detectada
+	 * [in] valuesXML es un obj que contiene valores de configuración leídos desde un XML
+	 */
+	public void moveFileImg(String matricula, Values valuesXML)
+	{
+		String pathImg = valuesXML.getPathImg();
+		
+		if((matricula != "") || (matricula != null))
+	    {
+	    	File file_temp = new File(pathImg+"RectanguloMatricula.png");
+		    File file_final = new File(valuesXML.pathImgMatriculas+"MATRICULA_"+matricula+".png");
+		    boolean success = file_temp.renameTo(file_final);
+		    if(!success)
+		    {
+		    	System.out.println("	[X] Error al copiar imagen");
+		    }
+		    else
+		    {
+		    	System.out.println("	[V] Imagen copiada correctamente");
+		    	file_temp.delete();
+		    }
+	    }
+	}
 	
 	/*
 	 * Esta funcion se encarga de comprobar si la matricula detectada se ajusta a las proporciones validas

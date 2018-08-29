@@ -81,6 +81,7 @@ public class ConnectSQL {
 		String fecha="";
 		String localizacion="";
 		String direccionCompleta="";
+		int iCount = 0;
 		
 		if(matricula.isEmpty() || (connection == null))
 		{
@@ -97,9 +98,10 @@ public class ConnectSQL {
 						"INNER JOIN propietario ON vehiculo.dni_v=propietario.dni\r\n" + 
 						"INNER JOIN infraccion ON vehiculo.infraccion=infraccion.id\r\n" + 
 						"INNER JOIN direccion ON propietario.direccion=direccion.id WHERE matricula='"+matricula+"'");
-			
+
 				while (sResultSet.next())
 				{
+					iCount++;
 					dniProp = sResultSet.getString("dni_v");
 					nombreCompleto = sResultSet.getString("nombre") + " " + sResultSet.getString("apellidos");
 					marca = sResultSet.getString("marca");
@@ -112,7 +114,14 @@ public class ConnectSQL {
 										+ ", " + sResultSet.getString("pais");
 	            }
 				
-				System.out.println("	[V] Consulta correcta");
+				if(iCount != 0)
+				{
+					System.out.println("	[V] Consulta correcta");
+				}
+				else
+				{
+					System.out.println("	[V] Consulta vacia");
+				}
 			} catch (SQLException e) {
 				System.out.println("	[X] Error en la consulta");
 				e.printStackTrace();
@@ -120,7 +129,10 @@ public class ConnectSQL {
 			
 			JSONObject objJson = new JSONObject();
 			try {
-				objJson = createJson(matricula, dniProp, nombreCompleto, marca, modelo, razon, fecha, localizacion, direccionCompleta, xmlPath, vXML);
+				if(iCount != 0)
+				{
+					objJson = createJson(matricula, dniProp, nombreCompleto, marca, modelo, razon, fecha, localizacion, direccionCompleta, xmlPath, vXML);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -33,6 +33,6 @@
     <fileJson createFile="true"></fileJson>
 
     <!-- Valor para decidir si se enviar información a MongoDB -->
-    <mongoDB dir="localhost" port="27017" enabled="true" dbName="Infracciones" collection="InfraccionesDet"></mongoDB>
+    <mongoDB dir="localhost" port="27017" enabled="false" dbName="Infracciones" collection="InfraccionesDet"></mongoDB>
 
 </detector>
